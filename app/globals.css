@@ -2,9 +2,39 @@
 
 @theme inline {
   --font-sans: var(--font-geist-sans);
+  --color-pool: #38bdf8;
+  --color-pool-deep: #0ea5e9;
+  --color-flamingo: #ec4899;
+  --color-donut: #f472b6;
+  --color-lemon: #facc15;
+  --color-palm: #22c55e;
+  --color-float-white: rgba(255, 255, 255, 0.85);
 }
 
 body {
   font-family: var(--font-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
+
+/* Pool water shimmer */
+@keyframes shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.pool-bg {
+  background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 25%, #7dd3fc 50%, #38bdf8 75%, #0ea5e9 100%);
+  background-size: 400% 400%;
+  animation: shimmer 8s ease-in-out infinite;
+}
+
+/* Floating animation for decorative elements */
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-8px) rotate(3deg); }
+  66% { transform: translateY(4px) rotate(-2deg); }
+}
+
+.float-slow { animation: float 6s ease-in-out infinite; }
+.float-medium { animation: float 4s ease-in-out infinite; }
+.float-fast { animation: float 3s ease-in-out infinite; }

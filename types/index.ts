@@ -5,4 +5,5 @@ export interface Guest {
   jobTitle: string;
   company: string;
   photoUrl: string | null;
+  logoUrl: string | null;
 }

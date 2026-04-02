@@ -1,23 +1,32 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import { Guest } from "@/types";
 
-export default function GuestCard({ guest }: { guest: Guest }) {
-  const [revealed, setRevealed] = useState(false);
+const CARD_EMOJIS = ["🦩", "🍩", "🍉", "🌴", "🍹", "🎈", "🩴", "🍍", "🌺", "🏖️"];
 
+interface GuestCardProps {
+  guest: Guest;
+  revealed: boolean;
+  onReveal: (id: string) => void;
+  index: number;
+}
+
+export default function GuestCard({ guest, revealed, onReveal, index }: GuestCardProps) {
   const initials = `${guest.firstName.charAt(0)}${guest.lastName.charAt(0)}`.toUpperCase();
+  const emoji = CARD_EMOJIS[index % CARD_EMOJIS.length];
 
   return (
     <div
-      onClick={() => setRevealed(true)}
-      className={`relative cursor-pointer rounded-2xl bg-white shadow-lg overflow-hidden transition-all duration-500 hover:shadow-xl ${
-        revealed ? "ring-2 ring-amber-300" : "hover:scale-[1.02]"
+      onClick={() => onReveal(guest.id)}
+      className={`relative cursor-pointer rounded-2xl overflow-hidden transition-all duration-500 hover:shadow-xl ${
+        revealed
+          ? "bg-white shadow-lg ring-2 ring-pink-300"
+          : "bg-white/90 backdrop-blur-sm shadow-md hover:scale-[1.02]"
       }`}
     >
       {/* Photo */}
-      <div className="relative w-full aspect-[3/4] bg-gradient-to-br from-amber-100 to-rose-100">
+      <div className="relative w-full aspect-[3/4] bg-gradient-to-br from-sky-100 via-cyan-50 to-pink-100">
         {guest.photoUrl ? (
           <Image
             src={guest.photoUrl}
@@ -30,7 +39,7 @@ export default function GuestCard({ guest }: { guest: Guest }) {
           />
         ) : (
           <div
-            className={`w-full h-full flex items-center justify-center text-4xl font-bold text-amber-600/40 transition-[filter] duration-700 ${
+            className={`w-full h-full flex items-center justify-center text-4xl font-bold text-sky-400/40 transition-[filter] duration-700 ${
               revealed ? "blur-0" : "blur-xl"
             }`}
           >
@@ -38,11 +47,23 @@ export default function GuestCard({ guest }: { guest: Guest }) {
           </div>
         )}
 
-        {/* Overlay when hidden */}
+        {/* Overlay when hidden — logo or pool emoji */}
         {!revealed && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/30 backdrop-blur-sm transition-opacity duration-500">
-            <span className="text-4xl mb-2">🎉</span>
-            <span className="text-sm font-medium text-gray-700 bg-white/70 px-3 py-1 rounded-full">
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-sky-200/40 to-pink-200/40 backdrop-blur-sm transition-opacity duration-500">
+            {guest.logoUrl ? (
+              <div className="relative w-16 h-16 mb-3">
+                <Image
+                  src={guest.logoUrl}
+                  alt={guest.company}
+                  fill
+                  className="object-contain drop-shadow-md"
+                  sizes="64px"
+                />
+              </div>
+            ) : (
+              <span className="text-5xl mb-2 drop-shadow-sm">{emoji}</span>
+            )}
+            <span className="text-sm font-medium text-sky-800 bg-white/70 px-3 py-1 rounded-full shadow-sm">
               Tap to reveal
             </span>
           </div>
@@ -60,7 +81,7 @@ export default function GuestCard({ guest }: { guest: Guest }) {
             {guest.firstName} {guest.lastName}
           </p>
           <p className="text-sm text-gray-600 mt-1">{guest.jobTitle}</p>
-          <p className="text-sm font-medium text-amber-600 mt-0.5">
+          <p className="text-sm font-medium text-sky-600 mt-0.5">
             {guest.company}
           </p>
         </div>

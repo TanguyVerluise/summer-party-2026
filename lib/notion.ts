@@ -21,8 +21,8 @@ function extractProperty(page: any, name: string): string {
   }
 }
 
-function extractPhoto(page: any): string | null {
-  const prop = page.properties["Photo"];
+function extractFileProperty(page: any, name: string): string | null {
+  const prop = page.properties[name];
   if (!prop) return null;
 
   if (prop.type === "files" && prop.files.length > 0) {
@@ -54,6 +54,10 @@ export async function fetchGuests(): Promise<Guest[]> {
   do {
     const response: any = await notion.databases.query({
       database_id: databaseId,
+      filter: {
+        property: "Statut",
+        select: { equals: "Confirmed" },
+      },
       start_cursor: cursor,
       page_size: 100,
     });
@@ -64,10 +68,11 @@ export async function fetchGuests(): Promise<Guest[]> {
   const guests: Guest[] = pages.map((page) => ({
     id: page.id,
     firstName: extractProperty(page, "Prénom"),
-    lastName: extractProperty(page, "Nom"),
+    lastName: extractProperty(page, "Nom de Famille"),
     jobTitle: extractProperty(page, "Poste"),
     company: extractProperty(page, "Entreprise"),
-    photoUrl: extractPhoto(page),
+    photoUrl: extractFileProperty(page, "Photo"),
+    logoUrl: extractFileProperty(page, "Logo"),
   }));
 
   return shuffle(guests);
