@@ -47,25 +47,38 @@ export default function GuestCard({ guest, revealed, onReveal, index }: GuestCar
           </div>
         )}
 
-        {/* Overlay when hidden — logo or pool emoji */}
+        {/* Overlay when hidden */}
         {!revealed && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-sky-200/40 to-pink-200/40 backdrop-blur-sm transition-opacity duration-500">
-            {guest.logoUrl ? (
-              <div className="relative w-16 h-16 mb-3">
-                <Image
-                  src={guest.logoUrl}
-                  alt={guest.company}
-                  fill
-                  className="object-contain drop-shadow-md"
-                  sizes="64px"
-                />
-              </div>
-            ) : (
+            {!guest.logoUrl && (
               <span className="text-5xl mb-2 drop-shadow-sm">{emoji}</span>
             )}
             <span className="text-sm font-medium text-sky-800 bg-white/70 px-3 py-1 rounded-full shadow-sm">
               Tap to reveal
             </span>
+          </div>
+        )}
+
+        {/* Logo badge — always visible, pinned at bottom of photo */}
+        {guest.logoUrl ? (
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10">
+            <div className="bg-white rounded-xl shadow-lg px-4 py-2 ring-1 ring-black/5">
+              <div className="relative w-20 h-8 sm:w-24 sm:h-10">
+                <Image
+                  src={guest.logoUrl}
+                  alt={guest.company}
+                  fill
+                  className="object-contain"
+                  sizes="96px"
+                />
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10">
+            <div className="bg-white rounded-xl shadow-lg px-4 py-1.5 ring-1 ring-black/5">
+              <span className="text-xs sm:text-sm font-semibold text-sky-700">{guest.company}</span>
+            </div>
           </div>
         )}
       </div>
