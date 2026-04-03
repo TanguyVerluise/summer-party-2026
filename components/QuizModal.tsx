@@ -118,12 +118,6 @@ export default function QuizModal({ onSuccess, onClose }: QuizModalProps) {
             </h2>
           )}
 
-          {/* Wrong counter */}
-          {wrongCount > 0 && !forceReveal && isCorrect !== true && (
-            <p className="text-sm text-gray-400 mt-1">
-              {wrongCount}/{MAX_WRONG} erreurs
-            </p>
-          )}
         </div>
 
         {/* Question */}
