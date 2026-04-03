@@ -36,15 +36,23 @@ export async function GET(request: NextRequest) {
 
   const prefix = request.nextUrl.searchParams.get("prefix") || "summer-party/";
   const blobs: { pathname: string; url: string }[] = [];
-  let cursor: string | undefined = undefined;
 
-  do {
-    const result = await list({ prefix, cursor, limit: 1000 });
-    for (const b of result.blobs) {
+  const firstPage = await list({ prefix, limit: 1000 });
+  for (const b of firstPage.blobs) {
+    blobs.push({ pathname: b.pathname, url: b.url });
+  }
+
+  let cursor: string | undefined = firstPage.hasMore
+    ? firstPage.cursor
+    : undefined;
+
+  while (cursor) {
+    const page = await list({ prefix, cursor, limit: 1000 });
+    for (const b of page.blobs) {
       blobs.push({ pathname: b.pathname, url: b.url });
     }
-    cursor = result.hasMore ? result.cursor : undefined;
-  } while (cursor);
+    cursor = page.hasMore ? page.cursor : undefined;
+  }
 
   return NextResponse.json({ blobs, count: blobs.length });
 }
