@@ -39,11 +39,11 @@ export async function GET(request: NextRequest) {
   let cursor: string | undefined = undefined;
 
   do {
-    const res = await list({ prefix, cursor, limit: 1000 });
-    for (const b of res.blobs) {
+    const result = await list({ prefix, cursor, limit: 1000 });
+    for (const b of result.blobs) {
       blobs.push({ pathname: b.pathname, url: b.url });
     }
-    cursor = res.hasMore ? res.cursor : undefined;
+    cursor = result.hasMore ? result.cursor : undefined;
   } while (cursor);
 
   return NextResponse.json({ blobs, count: blobs.length });
