@@ -38,3 +38,11 @@ body {
 .float-slow { animation: float 6s ease-in-out infinite; }
 .float-medium { animation: float 4s ease-in-out infinite; }
 .float-fast { animation: float 3s ease-in-out infinite; }
+
+/* Modal entrance */
+@keyframes modal-in {
+  from { opacity: 0; transform: scale(0.9) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.animate-in { animation: modal-in 0.3s ease-out; }

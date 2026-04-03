@@ -3,9 +3,11 @@
 import { useCallback, useState } from "react";
 import { Guest } from "@/types";
 import GuestCard from "./GuestCard";
+import QuizModal from "./QuizModal";
 
 export default function GuestGrid({ guests }: { guests: Guest[] }) {
   const [revealedIds, setRevealedIds] = useState<Set<string>>(new Set());
+  const [showQuiz, setShowQuiz] = useState(false);
 
   const onReveal = useCallback((id: string) => {
     setRevealedIds((prev) => {
@@ -15,6 +17,13 @@ export default function GuestGrid({ guests }: { guests: Guest[] }) {
       return next;
     });
   }, []);
+
+  const revealAll = useCallback(() => {
+    setRevealedIds(new Set(guests.map((g) => g.id)));
+    setShowQuiz(false);
+  }, [guests]);
+
+  const allRevealed = revealedIds.size >= guests.length;
 
   return (
     <div>
@@ -30,6 +39,28 @@ export default function GuestGrid({ guests }: { guests: Guest[] }) {
           <span>🏊</span>
         </div>
       </div>
+
+      {/* Reveal all button */}
+      {!allRevealed && (
+        <div className="text-center mb-8">
+          <button
+            onClick={() => setShowQuiz(true)}
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+          >
+            <span>🎉</span>
+            Révéler tous les invités
+            <span>🦩</span>
+          </button>
+        </div>
+      )}
+
+      {/* Quiz modal */}
+      {showQuiz && (
+        <QuizModal
+          onSuccess={revealAll}
+          onClose={() => setShowQuiz(false)}
+        />
+      )}
 
       {/* Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
