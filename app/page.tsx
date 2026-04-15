@@ -3,7 +3,7 @@ import { fetchGuests } from "@/lib/notion";
 import GuestGrid from "@/components/GuestGrid";
 
 const LE_TICKET_LOGO =
-  "https://zbjdebe6vzupm06b.public.blob.vercel-storage.com/summer-party/logos/Le%20ticket-Le%20ticket_logo%20sans%20baselineVert.png";
+  "https://zbjdebe6vzupm06b.public.blob.vercel-storage.com/summer-party/logos/LeTicketBlanc.png";
 
 export const revalidate = 3600;
 
@@ -54,19 +54,17 @@ export default async function Home() {
             <span className="text-white/70 normal-case tracking-normal">→</span>
           </a>
         </div>
-        <h1 className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 text-4xl sm:text-6xl font-extrabold text-white tracking-tight drop-shadow-lg">
+        <h1 className="flex flex-wrap justify-center items-center gap-3 sm:gap-5 text-4xl sm:text-6xl font-extrabold text-white tracking-tight drop-shadow-lg">
           <span>Summer Party</span>
-          <span className="bg-white rounded-xl sm:rounded-2xl shadow-lg px-3 py-2 sm:px-4 sm:py-3 ring-1 ring-black/5">
-            <span className="relative block w-32 h-9 sm:w-44 sm:h-12">
-              <Image
-                src={LE_TICKET_LOGO}
-                alt="Le Ticket"
-                fill
-                className="object-contain"
-                sizes="(min-width: 640px) 176px, 128px"
-                priority
-              />
-            </span>
+          <span className="relative inline-block w-40 h-10 sm:w-56 sm:h-14 drop-shadow-lg">
+            <Image
+              src={LE_TICKET_LOGO}
+              alt="Le Ticket"
+              fill
+              className="object-contain"
+              sizes="(min-width: 640px) 224px, 160px"
+              priority
+            />
           </span>
         </h1>
         <div className="flex justify-center gap-2 mt-4 text-3xl">
