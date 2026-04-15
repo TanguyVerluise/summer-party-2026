@@ -54,24 +54,21 @@ export default async function Home() {
             <span className="text-white/70 normal-case tracking-normal">→</span>
           </a>
         </div>
-        <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight drop-shadow-lg">
-          Summer Party
-        </h1>
-        <div className="flex justify-center items-center gap-2 mt-3">
-          <span className="text-white/90 font-medium text-lg sm:text-xl drop-shadow">by</span>
-          <div className="bg-white rounded-xl shadow-lg px-4 py-2 ring-1 ring-black/5">
-            <div className="relative w-28 h-8 sm:w-32 sm:h-10">
+        <h1 className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 text-4xl sm:text-6xl font-extrabold text-white tracking-tight drop-shadow-lg">
+          <span>Summer Party</span>
+          <span className="bg-white rounded-xl sm:rounded-2xl shadow-lg px-3 py-2 sm:px-4 sm:py-3 ring-1 ring-black/5">
+            <span className="relative block w-32 h-9 sm:w-44 sm:h-12">
               <Image
                 src={LE_TICKET_LOGO}
                 alt="Le Ticket"
                 fill
                 className="object-contain"
-                sizes="128px"
+                sizes="(min-width: 640px) 176px, 128px"
                 priority
               />
-            </div>
-          </div>
-        </div>
+            </span>
+          </span>
+        </h1>
         <div className="flex justify-center gap-2 mt-4 text-3xl">
           <span className="float-slow">🦩</span>
           <span className="float-medium">🍩</span>
