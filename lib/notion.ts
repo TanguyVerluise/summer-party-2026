@@ -38,15 +38,6 @@ function extractFileProperty(page: any, name: string): string | null {
   return null;
 }
 
-function shuffle<T>(array: T[]): T[] {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
-}
-
 export async function fetchGuests(): Promise<Guest[]> {
   const pages: any[] = [];
   let cursor: string | undefined = undefined;
@@ -75,5 +66,11 @@ export async function fetchGuests(): Promise<Guest[]> {
     logoUrl: extractFileProperty(page, "Logo"),
   }));
 
-  return shuffle(guests);
+  // Tri alphabétique par entreprise (regroupe les invités d'une même boîte),
+  // puis par prénom pour un ordre stable.
+  return guests.sort((a, b) => {
+    const byCompany = a.company.localeCompare(b.company, "fr", { sensitivity: "base" });
+    if (byCompany !== 0) return byCompany;
+    return a.firstName.localeCompare(b.firstName, "fr", { sensitivity: "base" });
+  });
 }
