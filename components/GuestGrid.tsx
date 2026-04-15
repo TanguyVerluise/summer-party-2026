@@ -27,32 +27,48 @@ export default function GuestGrid({ guests }: { guests: Guest[] }) {
 
   return (
     <div>
-      {/* Counter */}
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-5 py-2">
-          <span className="text-white text-sm">
-            <span className="font-bold text-lg">{revealedIds.size}</span>
-            {" / "}
-            <span className="font-bold text-lg">{guests.length}</span>
-            {" "}invités révélés
-          </span>
-          <span>🏊</span>
+      {/* Counter + Reveal-all CTA — linked together in one card */}
+      <div className="flex justify-center mb-8">
+        <div className="inline-flex flex-col items-center gap-3 bg-white/20 backdrop-blur-sm rounded-3xl px-6 py-4 max-w-sm">
+          {/* Counter */}
+          <div className="flex items-center gap-2 text-white">
+            <span className="text-sm">
+              <span className="font-bold text-lg">{revealedIds.size}</span>
+              {" / "}
+              <span className="font-bold text-lg">{guests.length}</span>
+              {" "}invités révélés
+            </span>
+            <span>🏊</span>
+          </div>
+
+          {/* Progress bar */}
+          <div className="w-full h-2 bg-white/25 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-pink-400 to-rose-400 transition-all duration-500 ease-out"
+              style={{
+                width: `${(revealedIds.size / Math.max(guests.length, 1)) * 100}%`,
+              }}
+            />
+          </div>
+
+          {/* Reveal-all CTA (hidden once everyone is revealed) */}
+          {!allRevealed && (
+            <>
+              <p className="text-white/85 text-xs italic">
+                Pas patient·e ? Révèle tout le monde d&apos;un coup 👇
+              </p>
+              <button
+                onClick={() => setShowQuiz(true)}
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              >
+                <span>🎉</span>
+                Révéler tous les invités
+                <span>🦩</span>
+              </button>
+            </>
+          )}
         </div>
       </div>
-
-      {/* Reveal all button */}
-      {!allRevealed && (
-        <div className="text-center mb-8">
-          <button
-            onClick={() => setShowQuiz(true)}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-          >
-            <span>🎉</span>
-            Révéler tous les invités
-            <span>🦩</span>
-          </button>
-        </div>
-      )}
 
       {/* Quiz modal */}
       {showQuiz && (

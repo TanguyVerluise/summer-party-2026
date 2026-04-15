@@ -31,12 +31,24 @@ export default async function Home() {
 
       {/* Header */}
       <header className="relative pt-12 pb-8 px-4 text-center">
-        <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-1.5 mb-4">
-          <span>🍹</span>
-          <p className="text-white font-medium tracking-widest uppercase text-sm">
-            Mardi 23 juin 2026
-          </p>
-          <span>🩴</span>
+        <div className="flex flex-wrap justify-center items-center gap-2 mb-4">
+          <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-1.5">
+            <span>🍹</span>
+            <p className="text-white font-medium tracking-widest uppercase text-sm">
+              Mardi 23 juin 2026
+            </p>
+            <span>🩴</span>
+          </div>
+          <a
+            href="https://maps.app.goo.gl/s8MxVH1nRX16Dj786"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/35 backdrop-blur-sm rounded-full px-4 py-1.5 text-white font-medium tracking-widest uppercase text-sm transition-colors"
+          >
+            <span>📍</span>
+            <span>Café A, Paris</span>
+            <span className="text-white/70 normal-case tracking-normal">→</span>
+          </a>
         </div>
         <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight drop-shadow-lg">
           Summer Party
@@ -46,16 +58,6 @@ export default async function Home() {
           <span className="float-medium">🍩</span>
           <span className="float-fast">🍉</span>
         </div>
-        <a
-          href="https://maps.app.goo.gl/s8MxVH1nRX16Dj786"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 mt-4 bg-white/25 hover:bg-white/35 backdrop-blur-sm rounded-full px-4 py-1.5 text-white font-medium text-sm transition-colors drop-shadow"
-        >
-          <span>📍</span>
-          <span>Café A, Paris</span>
-          <span className="text-white/70">→</span>
-        </a>
         <p className="text-lg text-white/80 mt-4 max-w-md mx-auto drop-shadow">
           Découvre qui sera là — tape sur une carte pour révéler un invité
         </p>
