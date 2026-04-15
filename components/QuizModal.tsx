@@ -10,7 +10,7 @@ interface QuizModalProps {
 
 const EMOJI_CORRECT = ["🎉", "🥳", "🏖️", "🦩", "🍹"];
 const EMOJI_WRONG = ["💦", "🫠", "🤿", "🌊", "😅"];
-const MAX_WRONG = 10;
+const MAX_WRONG = 5;
 
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
@@ -106,7 +106,10 @@ export default function QuizModal({ onSuccess, onClose }: QuizModalProps) {
             </h2>
           ) : forceReveal ? (
             <h2 className="text-xl font-bold text-pink-500 mt-2">
-              Allez, on te les montre quand même 😘
+              Bon, t&apos;as bien essayé 😘<br />
+              <span className="text-base font-semibold text-pink-400">
+                On te les montre quand même, viens faire la fête 🦩🍹
+              </span>
             </h2>
           ) : isCorrect === false ? (
             <h2 className="text-xl font-bold text-pink-500 mt-2">

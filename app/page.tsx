@@ -72,9 +72,6 @@ export default async function Home() {
           <span className="float-medium">🍩</span>
           <span className="float-fast">🍉</span>
         </div>
-        <p className="text-lg text-white/80 mt-4 max-w-md mx-auto drop-shadow">
-          Découvre qui sera là — tape sur une carte pour révéler un invité
-        </p>
       </header>
 
       {/* Guest grid */}
