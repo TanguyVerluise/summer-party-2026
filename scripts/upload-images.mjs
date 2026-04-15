@@ -171,20 +171,18 @@ async function main() {
   console.log(`  Uploadés: ${uploaded}  |  Skippés: ${skipped}`);
   console.log(`${"═".repeat(60)}\n`);
 
-  if (results.photos.length > 0) {
-    console.log("📸 PHOTOS — URLs à coller dans Notion :\n");
-    for (const { file, url } of results.photos) {
-      console.log(`${file} → ${url}`);
-    }
-    console.log();
-  }
+  for (const type of ["photos", "logos"]) {
+    if (results[type].length === 0) continue;
 
-  if (results.logos.length > 0) {
-    console.log("🏢 LOGOS — URLs à coller dans Notion :\n");
-    for (const { file, url } of results.logos) {
-      console.log(`${file} → ${url}`);
+    const label = type === "photos" ? "📸 PHOTOS" : "🏢 LOGOS";
+    console.log(`${label} — ${results[type].length} nouvelles images :`);
+    console.log(`${"─".repeat(60)}`);
+    console.log(`Fichier\tURL`);
+    for (const { file, url } of results[type]) {
+      const name = file.replace(/\.[^.]+$/, ""); // sans extension
+      console.log(`${name}\t${url}`);
     }
-    console.log();
+    console.log(`${"─".repeat(60)}\n`);
   }
 }
 
