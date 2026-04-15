@@ -8,9 +8,9 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Summer Party 2026 — Le Ticket",
+  title: "Summer Party Le Ticket — 23 juin 2026",
   description:
-    "Découvre les invités de la Summer Party du Ticket, juin 2026.",
+    "Découvre les invités de la Summer Party Le Ticket, mardi 23 juin 2026 au Café A.",
 };
 
 export default function RootLayout({

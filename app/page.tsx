@@ -1,5 +1,9 @@
+import Image from "next/image";
 import { fetchGuests } from "@/lib/notion";
 import GuestGrid from "@/components/GuestGrid";
+
+const LE_TICKET_LOGO =
+  "https://zbjdebe6vzupm06b.public.blob.vercel-storage.com/summer-party/logos/Le%20ticket-Le%20ticket_logo%20sans%20baselineVert.png";
 
 export const revalidate = 3600;
 
@@ -53,7 +57,22 @@ export default async function Home() {
         <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight drop-shadow-lg">
           Summer Party
         </h1>
-        <div className="flex justify-center gap-2 mt-2 text-3xl">
+        <div className="flex justify-center items-center gap-2 mt-3">
+          <span className="text-white/90 font-medium text-lg sm:text-xl drop-shadow">by</span>
+          <div className="bg-white rounded-xl shadow-lg px-4 py-2 ring-1 ring-black/5">
+            <div className="relative w-28 h-8 sm:w-32 sm:h-10">
+              <Image
+                src={LE_TICKET_LOGO}
+                alt="Le Ticket"
+                fill
+                className="object-contain"
+                sizes="128px"
+                priority
+              />
+            </div>
+          </div>
+        </div>
+        <div className="flex justify-center gap-2 mt-4 text-3xl">
           <span className="float-slow">🦩</span>
           <span className="float-medium">🍩</span>
           <span className="float-fast">🍉</span>
