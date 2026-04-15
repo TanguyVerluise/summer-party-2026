@@ -34,7 +34,7 @@ export default async function Home() {
         <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-1.5 mb-4">
           <span>🍹</span>
           <p className="text-white font-medium tracking-widest uppercase text-sm">
-            Juin 2026
+            Mardi 23 juin 2026
           </p>
           <span>🩴</span>
         </div>
@@ -46,7 +46,17 @@ export default async function Home() {
           <span className="float-medium">🍩</span>
           <span className="float-fast">🍉</span>
         </div>
-        <p className="text-lg text-white/80 mt-3 max-w-md mx-auto drop-shadow">
+        <a
+          href="https://maps.app.goo.gl/s8MxVH1nRX16Dj786"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 mt-4 bg-white/25 hover:bg-white/35 backdrop-blur-sm rounded-full px-4 py-1.5 text-white font-medium text-sm transition-colors drop-shadow"
+        >
+          <span>📍</span>
+          <span>Café A, Paris</span>
+          <span className="text-white/70">→</span>
+        </a>
+        <p className="text-lg text-white/80 mt-4 max-w-md mx-auto drop-shadow">
           Découvre qui sera là — tape sur une carte pour révéler un invité
         </p>
       </header>
