@@ -7,17 +7,26 @@
  *
  * Le script est idempotent : il skip les fichiers déjà uploadés (même pathname).
  *
+ * After uploads, the script automatically:
+ *   1. Re-scans logo backgrounds and rewrites lib/logo-colors.ts so the
+ *      badge tint stays accurate.
+ *   2. Triggers /api/revalidate to refresh the deployed page (Notion data).
+ *
+ * Skip those side effects with --no-refresh.
+ *
  * Usage :
- *   node scripts/upload-images.mjs              # upload tout
+ *   node scripts/upload-images.mjs              # upload tout + refresh
  *   node scripts/upload-images.mjs --photos     # photos seulement
  *   node scripts/upload-images.mjs --logos      # logos seulement
  *   node scripts/upload-images.mjs --force      # re-upload même si déjà présent
+ *   node scripts/upload-images.mjs --no-refresh # skip logo scan + revalidate
  */
 
 import { readFileSync, readdirSync } from "fs";
 import { join, extname } from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import { inspectLogos } from "./inspect-logos.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -35,6 +44,10 @@ const args = process.argv.slice(2);
 const photosOnly = args.includes("--photos");
 const logosOnly = args.includes("--logos");
 const force = args.includes("--force");
+const noRefresh = args.includes("--no-refresh");
+const REVALIDATE_URL = `${API_BASE}/api/revalidate?secret=${encodeURIComponent(
+  UPLOAD_SECRET
+)}`;
 
 const IMAGE_EXTS = new Set([".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg"]);
 
@@ -183,6 +196,42 @@ async function main() {
       console.log(`${name}\t${url}`);
     }
     console.log(`${"─".repeat(60)}\n`);
+  }
+
+  if (noRefresh) {
+    console.log("⏭  --no-refresh: skipping logo color scan + revalidate.\n");
+    return;
+  }
+
+  // ── 1. Rescan logo backgrounds → regenerate lib/logo-colors.ts ──
+  console.log("🎨 Scanning logo backgrounds...");
+  try {
+    const { colored, changed } = await inspectLogos({ silent: true });
+    if (changed) {
+      console.log(
+        `   ✅ lib/logo-colors.ts updated (${colored.length} tinted logos) — commit & push to deploy.\n`
+      );
+    } else {
+      console.log(
+        `   ⏭  lib/logo-colors.ts unchanged (${colored.length} tinted logos).\n`
+      );
+    }
+  } catch (err) {
+    console.warn(`   ⚠️  Logo scan failed: ${err.message}\n`);
+  }
+
+  // ── 2. Trigger revalidation of the deployed site ──
+  console.log(`🔄 Revalidating ${API_BASE}...`);
+  try {
+    const res = await fetch(REVALIDATE_URL, { method: "POST" });
+    if (res.ok) {
+      const body = await res.text();
+      console.log(`   ✅ Revalidated (${res.status})${body ? " — " + body.slice(0, 200) : ""}\n`);
+    } else {
+      console.warn(`   ⚠️  Revalidate returned ${res.status}: ${await res.text()}\n`);
+    }
+  } catch (err) {
+    console.warn(`   ⚠️  Revalidate failed: ${err.message}\n`);
   }
 }
 

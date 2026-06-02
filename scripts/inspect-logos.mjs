@@ -18,9 +18,12 @@
 
 import fs from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 
-const LOGOS_DIR = path.join(process.cwd(), "images", "logos");
+const __filename = fileURLToPath(import.meta.url);
+const PROJECT_ROOT = path.join(path.dirname(__filename), "..");
+const LOGOS_DIR = path.join(PROJECT_ROOT, "images", "logos");
 
 function rgbToHex(r, g, b) {
   return (
@@ -121,7 +124,9 @@ async function inspectSvg(file) {
   return { kind: "transparent (default)" };
 }
 
-async function main() {
+export async function inspectLogos({ silent = false } = {}) {
+  const log = silent ? () => {} : (...a) => console.log(...a);
+
   const files = await fs.readdir(LOGOS_DIR);
   files.sort((a, b) => a.localeCompare(b, "fr", { sensitivity: "base" }));
 
@@ -154,26 +159,26 @@ async function main() {
     }
   }
 
-  console.log(`\n=== Background scan: ${files.length} logos ===\n`);
+  log(`\n=== Background scan: ${files.length} logos ===\n`);
 
-  console.log(`🟦 COLORED background (need card tint) — ${colored.length}:`);
+  log(`🟦 COLORED background (need card tint) — ${colored.length}:`);
   for (const r of colored) {
-    console.log(`   ${r.file}\t${r.hex}${r.rgb ? "  " + r.rgb : ""}`);
+    log(`   ${r.file}\t${r.hex}${r.rgb ? "  " + r.rgb : ""}`);
   }
-  if (colored.length === 0) console.log("   (none)");
+  if (colored.length === 0) log("   (none)");
 
-  console.log(`\n🟫 MIXED / unclear — ${mixed.length}:`);
+  log(`\n🟫 MIXED / unclear — ${mixed.length}:`);
   for (const r of mixed) {
-    console.log(`   ${r.file}\t${r.kind}${r.error ? " — " + r.error : ""}`);
+    log(`   ${r.file}\t${r.kind}${r.error ? " — " + r.error : ""}`);
   }
-  if (mixed.length === 0) console.log("   (none)");
+  if (mixed.length === 0) log("   (none)");
 
-  console.log(`\n⬜ WHITE background — ${white.length}`);
-  console.log(`◻️  TRANSPARENT background — ${transparent.length}`);
-  console.log();
+  log(`\n⬜ WHITE background — ${white.length}`);
+  log(`◻️  TRANSPARENT background — ${transparent.length}`);
+  log();
 
   // ---------- Emit lib/logo-colors.ts ----------
-  const outPath = path.join(process.cwd(), "lib", "logo-colors.ts");
+  const outPath = path.join(PROJECT_ROOT, "lib", "logo-colors.ts");
   const entries = colored
     .map((r) => `  ${JSON.stringify(r.file)}: ${JSON.stringify(r.hex)},`)
     .sort()
@@ -191,13 +196,30 @@ ${entries}
 };
 `;
 
-  await fs.writeFile(outPath, ts, "utf8");
-  console.log(
-    `→ Wrote ${colored.length} entries to lib/logo-colors.ts\n`
-  );
+  // Only write if content actually changed → avoids dirtying git on no-op runs.
+  let changed = true;
+  try {
+    const prev = await fs.readFile(outPath, "utf8");
+    changed = prev !== ts;
+  } catch {
+    /* file doesn't exist yet → changed = true */
+  }
+
+  if (changed) {
+    await fs.writeFile(outPath, ts, "utf8");
+    log(`→ Wrote ${colored.length} entries to lib/logo-colors.ts\n`);
+  } else {
+    log(`→ lib/logo-colors.ts unchanged (${colored.length} entries)\n`);
+  }
+
+  return { colored, mixed, white, transparent, changed };
 }
 
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+// Run as CLI when invoked directly (not when imported).
+const isMainModule = process.argv[1] === __filename;
+if (isMainModule) {
+  inspectLogos().catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
+}
