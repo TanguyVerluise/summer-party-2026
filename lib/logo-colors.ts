@@ -7,6 +7,7 @@
 
 export const LOGO_BG_COLORS: Record<string, string> = {
   "WTTJ.png": "#ffcd00",
+  "d_lighter.jpeg": "#fff0f7",
   "mesdarons.webp": "#c86d4c",
   "noe.png": "#4252ff",
   "openclassrooms2.jpg": "#7451eb",

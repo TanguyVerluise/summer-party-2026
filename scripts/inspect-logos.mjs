@@ -33,7 +33,13 @@ function rgbToHex(r, g, b) {
 }
 
 function isWhiteish(r, g, b) {
-  return r >= 240 && g >= 240 && b >= 240;
+  // Genuine white / light grey only: all channels are bright AND nearly equal.
+  // A slight tint like #FFF0F7 (very pale pink, e.g. d_lighter.jpeg) has
+  // 255-240=15 between max and min — that's NOT neutral, so we don't treat it
+  // as white. The badge should be tinted to match.
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  return min >= 240 && max - min <= 8;
 }
 
 function colorsAgree(a, b, tol = 12) {
