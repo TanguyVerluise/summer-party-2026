@@ -2,8 +2,26 @@
 
 import Image from "next/image";
 import { Guest } from "@/types";
+import { LOGO_BG_COLORS } from "@/lib/logo-colors";
 
 const CARD_EMOJIS = ["🦩", "🍩", "🍉", "🌴", "🍹", "🎈", "🩴", "🍍", "🌺", "🏖️"];
+
+/**
+ * Look up the dominant background colour of a logo from its blob URL. We key
+ * the map on the bare filename (e.g. "mesdarons.webp") so it survives any
+ * future change of blob store / pathname prefix.
+ */
+function logoBackgroundColor(logoUrl: string | null | undefined): string | undefined {
+  if (!logoUrl) return undefined;
+  try {
+    const pathname = new URL(logoUrl).pathname;
+    const last = pathname.split("/").pop() ?? "";
+    const filename = decodeURIComponent(last);
+    return LOGO_BG_COLORS[filename];
+  } catch {
+    return undefined;
+  }
+}
 
 interface GuestCardProps {
   guest: Guest;
@@ -15,6 +33,7 @@ interface GuestCardProps {
 export default function GuestCard({ guest, revealed, onReveal, index }: GuestCardProps) {
   const initials = `${guest.firstName.charAt(0)}${guest.lastName.charAt(0)}`.toUpperCase();
   const emoji = CARD_EMOJIS[index % CARD_EMOJIS.length];
+  const logoBg = logoBackgroundColor(guest.logoUrl);
 
   return (
     <div
@@ -62,7 +81,10 @@ export default function GuestCard({ guest, revealed, onReveal, index }: GuestCar
         {/* Logo badge — always visible, pinned at bottom of photo */}
         {guest.logoUrl ? (
           <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10">
-            <div className="bg-white rounded-xl shadow-lg px-4 py-2 ring-1 ring-black/5">
+            <div
+              className="rounded-xl shadow-lg px-4 py-2 ring-1 ring-black/5"
+              style={{ backgroundColor: logoBg ?? "#ffffff" }}
+            >
               <div className="relative w-20 h-8 sm:w-24 sm:h-10">
                 <Image
                   src={guest.logoUrl}
