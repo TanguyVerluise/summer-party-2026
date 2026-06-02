@@ -44,6 +44,14 @@ function colorsAgree(a, b, tol = 12) {
   );
 }
 
+// A logo qualifies for badge tinting only when it is a "solid tile" — i.e.
+// the four corners are opaque AND the image as a whole has almost no
+// transparent pixels. Logos with significant transparent padding (e.g.
+// HomeExchange, ABtasty, adeo) are visually fine on a white badge because
+// the badge bg is supposed to peek through that padding — those should NOT
+// be tinted, even if their corners happen to be colored.
+const MAX_TRANSPARENT_PCT_FOR_TINT = 0.05;
+
 async function inspectRaster(file) {
   const img = sharp(file).ensureAlpha();
   const meta = await img.metadata();
@@ -82,17 +90,37 @@ async function inspectRaster(file) {
     return { kind: "white" };
   }
 
+  // Count fully transparent pixels across the whole image — if this is
+  // significant, the image has transparent padding and the badge bg is
+  // meant to show through. Don't tint.
+  let transparentCount = 0;
+  for (let i = 3; i < data.length; i += 4) {
+    if (data[i] < 16) transparentCount++;
+  }
+  const transparentPct = transparentCount / (width * height);
+
   // All opaque corners share roughly the same color?
   const first = opaqueCorners[0];
   if (opaqueCorners.every((c) => colorsAgree(c, first))) {
+    if (transparentPct < MAX_TRANSPARENT_PCT_FOR_TINT) {
+      // Solid tile → tint the badge to match.
+      return {
+        kind: "colored",
+        hex: rgbToHex(first.r, first.g, first.b),
+        rgb: `rgb(${first.r}, ${first.g}, ${first.b})`,
+        transparentPct,
+      };
+    }
+    // Colored corners but significant transparent padding → leave the
+    // badge white, the padding will show through naturally.
     return {
-      kind: "colored",
+      kind: "colored-with-padding",
       hex: rgbToHex(first.r, first.g, first.b),
-      rgb: `rgb(${first.r}, ${first.g}, ${first.b})`,
+      transparentPct,
     };
   }
 
-  return { kind: "mixed", corners };
+  return { kind: "mixed", corners, transparentPct };
 }
 
 async function inspectSvg(file) {
@@ -133,6 +161,7 @@ export async function inspectLogos({ silent = false } = {}) {
   const transparent = [];
   const white = [];
   const colored = [];
+  const coloredWithPadding = [];
   const mixed = [];
 
   for (const file of files) {
@@ -151,6 +180,8 @@ export async function inspectLogos({ silent = false } = {}) {
         white.push(row);
       } else if (result.kind === "colored") {
         colored.push(row);
+      } else if (result.kind === "colored-with-padding") {
+        coloredWithPadding.push(row);
       } else {
         mixed.push(row);
       }
@@ -161,11 +192,18 @@ export async function inspectLogos({ silent = false } = {}) {
 
   log(`\n=== Background scan: ${files.length} logos ===\n`);
 
-  log(`🟦 COLORED background (need card tint) — ${colored.length}:`);
+  log(`🟦 SOLID COLORED TILE (badge will be tinted) — ${colored.length}:`);
   for (const r of colored) {
     log(`   ${r.file}\t${r.hex}${r.rgb ? "  " + r.rgb : ""}`);
   }
   if (colored.length === 0) log("   (none)");
+
+  log(`\n🎨 Colored corners but has transparent padding (badge stays white) — ${coloredWithPadding.length}:`);
+  for (const r of coloredWithPadding) {
+    const pct = ((r.transparentPct ?? 0) * 100).toFixed(0);
+    log(`   ${r.file}\t${r.hex}\t(${pct}% transparent)`);
+  }
+  if (coloredWithPadding.length === 0) log("   (none)");
 
   log(`\n🟫 MIXED / unclear — ${mixed.length}:`);
   for (const r of mixed) {

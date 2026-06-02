@@ -6,14 +6,8 @@
 // logos.
 
 export const LOGO_BG_COLORS: Record<string, string> = {
-  "ABtasty.png": "#3100be",
-  "HomeExchange.png": "#f7a800",
-  "Mirakl.png": "#0d2142",
   "WTTJ.png": "#ffcd00",
-  "adeo.png": "#a6a696",
-  "maria2.png": "#ffcd00",
   "mesdarons.webp": "#c86d4c",
   "noe.png": "#4252ff",
   "openclassrooms2.jpg": "#7451eb",
-  "pluee.png": "#221c46",
 };
