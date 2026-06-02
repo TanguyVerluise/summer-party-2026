@@ -1,13 +1,20 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Guest } from "@/types";
 import GuestCard from "./GuestCard";
 import QuizModal from "./QuizModal";
 
+// Auto-prompt the quiz once the user has manually revealed this many cards —
+// nudges them to use the bulk-reveal flow instead of tapping every tile.
+const AUTO_QUIZ_THRESHOLD = 5;
+
 export default function GuestGrid({ guests }: { guests: Guest[] }) {
   const [revealedIds, setRevealedIds] = useState<Set<string>>(new Set());
   const [showQuiz, setShowQuiz] = useState(false);
+  // Track whether the auto-prompt has fired so closing the modal doesn't
+  // reopen it on the next manual reveal.
+  const [autoPromptFired, setAutoPromptFired] = useState(false);
 
   const onReveal = useCallback((id: string) => {
     setRevealedIds((prev) => {
@@ -24,6 +31,20 @@ export default function GuestGrid({ guests }: { guests: Guest[] }) {
   }, [guests]);
 
   const allRevealed = revealedIds.size >= guests.length;
+
+  // Auto-open the quiz once the user crosses the manual-reveal threshold.
+  // Fires at most once; user can close and keep clicking tiles freely.
+  useEffect(() => {
+    if (
+      !autoPromptFired &&
+      !showQuiz &&
+      !allRevealed &&
+      revealedIds.size >= AUTO_QUIZ_THRESHOLD
+    ) {
+      setShowQuiz(true);
+      setAutoPromptFired(true);
+    }
+  }, [revealedIds.size, autoPromptFired, showQuiz, allRevealed]);
 
   return (
     <div>
